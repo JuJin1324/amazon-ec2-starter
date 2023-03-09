@@ -19,8 +19,29 @@
 > Subnet 은 하나의 Route table 에만 연결할 수 있지만, Route table 은 여러개의 subnet 을 연결할 수 있다.  
 > 기본 Route table 이 존재하지만 해당 라우트 테이블을 사용하지 않고 신규로 생성해서 사용하는 것을 권장한다.  
 
-### IGWs
+### IGWs(Internet GateWay)
+> Public subnet 에 포함된 인스턴스가 인터넷과 커뮤니케이션하기 위한 point.  
+> Public subnet 에서 사용하는 라우팅 테이블에 인터넷(일반적으로 0.0.0.0/0) - IGW 라우팅을 추가해야 
+> 외부에서 Public subnet 에 포함된 인스턴스에 SSH 접근과 같이 접근이 가능해진다.  
 > 
+> IGW 는 가용성을 위해서 각 AZ 마다 IGW 를 만들 필요가 없다.  
+
+### NATs
+> Private subnet 에 포함된 인스턴스가 인터넷과 커뮤니케이션하기 위한 point.  
+> 종류는 2가지로 NAT gateway, NAT instance 로 나뉜다.  
+> NAT gateway: AWS 에서 제공하는 서비스  
+> NAT instance: NAT 서비스를 호스팅하는 EC2 instance    
+> 
+> NAT 서비스는 IPv4 네트워크 트래픽만 지원하며, 인스턴스와 IGW 사이의 중간 point 역할을 한다.  
+> NAT gateway 및 NAT instance 는 public subnet 에 배포된다.  
+> NAT gateway 는 Elastic IP(고정 아이피)가 필수로 필요하다.  
+> 
+> Private subnet 에 포함된 인스턴스의 트래픽을 인터넷으로 라우팅하기 위해서는 Private subnet 에서 사용하는 라우팅 테이블에
+> NAT device - 인터넷(일반적으로 0.0.0.0/0) 라우팅을 추가한다.
+> 
+> NAT gateway 가 배포된 AZ 가 fail 되서 통신이 멈추게 되면 해당 NAT gateway 를 통해서 인터넷과 연결되는 private subnet 의
+> 인스턴스들의 인터넷 연결이 중단되게 됨으로 NAT gateway 를 멀티 AZ 에 배포 및 
+> NAT gateway 가 배포된 AZ 마다 라우팅 테이블을 생성하여 NAT-gateway 라우팅 추가를 통해서 고가용성을 유지 하도록 한다.  
 
 ---
 
