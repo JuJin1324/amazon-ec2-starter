@@ -60,9 +60,6 @@
 > SSH 를 통해서 EC2 인스턴스에 접근하기 위한 Key의 Pair(Private Key, Public Key)
 > EC2 인스턴스 생성 시 인스턴스에 접근할 수 있도록 허용하는 KeyPair 등록이 필수.
 
-### SSH 접속
->
-
 ### Amazon Linux 인스턴스에서 호스트 이름 변경
 > 호스트 이름 업데이트를 유지하려면 preserve_hostname cloud-init 설정이 true로 설정되어 있는지 확인 필요.   
 > 다음 명령을 실행하여 이 설정을 편집하거나 추가할 수 있다.  
@@ -75,6 +72,38 @@
 > EC2 콘솔에서 재부팅 한 후 호스트 이름이 변경되었는지 확인한다.  
 > 
 > 참조사이트: [Amazon Linux 인스턴스에서 호스트 이름 변경](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/set-hostname.html)
+
+### 인스턴스 타입 변경
+> 인스턴스 타입을 변경하기 위해서는 먼저 인스턴스를 중지한다.  
+> 타입을 변경하려는 인스턴스를 선택한 후 작업 버튼 클릭 -> 인스턴스 설정 -> 인스턴스 유형 변경을 클릭한다.
+
+### Public instance SSH 접속
+> 먼저 KeyPair 가 없다면 EC2 콘솔의 왼쪽 탭에서 네트워크 및 보안 섹션에 '키 페어' 를 클릭하여 접속 후 
+> 키 페어를 생성한다.  
+> SSH 접속을 원하는 클라이언트는 macOS 를 기준으로 설명한다.  
+> 키 페어를 생성하면서 받은 .pem 파일을 ~/.ssh 에 위치시켰으며 이름은 test-keypair.pem 으로 가정하여 설명한다.  
+> Public instance 에 접근하는 클라이언트의 IP 주소가 EC2 인스턴스의 보안 그룹에 22 포트와 함께 등록되었다고 가정한다.  
+> Public instance 가 amazon linux 를 사용하여 계정명이 ec2-user 로 가정한다.   
+> 다음 명령어를 통해서 ssh 접속이 가능하다
+> ```shell
+> export AWS_KEYPAIR=$HOME/.ssh/test-keypair.pem
+> export PUBLIC_EC2_IP=<Public instance 의 Public IP address>
+> ssh -i $AWS_KEYPAIR ec2-user@$PUBLIC_EC2_IP
+> ```
+
+### Private instance SSH 접속
+> Private instance 는 외부망에서는 직접 접속을 할 수 없음으로 접속을 위해서 bastion host 가 필요하다.  
+> bastion host 는 내부 접속 용도의 EC2 instance 로 Public instance 이며, 보안 그룹에는 
+> 외부에서 접속할 클라이언트의 IP 와 22 포트를 등록해야 한다.  
+> Private instance 의 보안 그룹에는 bastion host 의 IP Address 혹은 bastion host 의 보안그룹을 등록하여 
+> bastion host 에서 Private instance 에 접속이 가능하도록 설정이 필요하다.  
+> 외부망에서 Private instacne 의 접속은 ssh 터널링을 통해서 다음의 명령어로 접속한다.  
+> ```shell
+> export AWS_KEYPAIR=$HOME/.ssh/test-keypair.pem
+> export BASTION_HOST_IP=<Bastion host 의 public IP address>
+> export PRIVATE_EC2_IP=<Private instance 의 private IP address>
+> ssh -t -o ProxyCommand="ssh -W %h:%p ec2-user@$BASTION_HOST_IP -i $AWS_KEYPAIR" ec2-user@$PRIVATE_EC2_IP -i $AWS_KEYPAIR'
+> ```
 
 ---
 
