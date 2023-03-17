@@ -221,14 +221,14 @@
 > 인스턴스가 호스팅하는 애플리케이션을 기준으로 한 SecurityGroup 생성을 권장.  
 > 
 > 이름 구성  
-> 서비스와 애플리케이션으로 분류: <큰 서비스 이름>-<애플리케이션 이름>-sg  
-> 애플리케이션으로만 분류: <애플리케이션 이름>-sg
+> 서비스와 애플리케이션으로 분류: <큰 서비스 이름>-<애플리케이션 이름> 
+> 애플리케이션으로만 분류: <애플리케이션 이름>
 > 
 > 예를 들어 `jujin` 이라는 web application 서비스를 호스팅하는 EC2 를 만들어서 해당 EC2 인스턴스에 SecurityGroup 을 붙이려고 할 때 
-> SecurityGroup 의 이름을 `jujin-web-application-sg` 와 같은 식으로 혹은 `web-application-sg` 와 같이 범위를 더 늘려서 나눈다.
+> SecurityGroup 의 이름을 `jujin-web-app` 와 같은 식으로 혹은 `web-app` 와 같이 범위를 더 늘려서 나눈다.
 > 
-> `jujin` 이라는 rdbms 서비스를 호스팅하는 RDS 의 경우는 해당 RDS 인스턴스에 붙일 SecurityGroup 이름을 `jujin-mysql-sg` 혹은 
-> `mysql-sg` 와 같이 범위를 더 늘려서 나눈다.
+> `jujin` 이라는 rdbms 서비스를 호스팅하는 RDS 의 경우는 해당 RDS 인스턴스에 붙일 SecurityGroup 이름을 `jujin-mysql` 혹은 
+> `mysql` 와 같이 범위를 더 늘려서 나눈다.
 
 ### source IP 에 SecurityGroup ID 가 붙는 경우
 > 해당 SecurityGroup 을 연결한 모든 인스턴스가 source 가 된다.  
