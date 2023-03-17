@@ -145,6 +145,35 @@
 > EC2 인스턴스에서 EBS 설정 탭에서 '종료 시 삭제' 옵션이 '예' 로 설정되어 있으면 종료(terminated) 시에 EBS 도 자동 삭제되지만
 > '종료 시 삭제' 옵션을 '아니오'로 설정하면 EC2 인스턴스 종료 후 EBS 볼륨이 어느 인스턴스와도 연결되어 있지 않더라도 그 상태 그대로 유지됨.
 
+### General Purpose SSD(gp2)
+> 33GB 이하는 최소 IOPS 로 100 으로 제공하며 33GB 를 초과하면 GB 당 3 IOPS 를 증가시켜서 제공한다.    
+> gp2 에서 제공하는 IOPS 의 최대치는 16,000 이다. 
+
+### Provisioned IOPS SSD(io1)
+> I/O 처리량이 많이 필요한 RDB 와 같은 서비스 사용 시 사용한다.  
+> io1 의 IOPS 설정은 최소 100 부터 최대 64,000 까지 가능하다.  
+
+### Throughput optimized HDD(st1)
+> Big data, Data warehouse, Log processing 등에 사용한다.   
+> 볼륨 크기는 최소 500GB 부터 16TB 까지 제공한다.
+
+### CloudWatch Monitoring
+> EBS 의 적절한 volume 및 IOPS 크기 선택, 처리량 모니터링을 위해서 모니터링이 필요하다.  
+> io1 만 1분 단위로 모니터링 데이터를 cloudwatch 에 전송하고 나머지는 5분 단위로 모니터링 데이터를 전송한다.  
+> 추가 프로그램 설치 및 설정 없이 EBS 생성 시 기본적으로 read/write bandwidth 및 
+> read/write throughput metric 을 cloudwatch 에서 확인할 수 있다.    
+> 디스크 사용량은 cloudwatch agent 를 설치를 통해서 따로 모니터링이 필요하다.
+
+### Snapshots
+> EBS backup 으로 하나의 EBS 에 대해서 여러 시점 백업 시 변경 사항 versioning 을 통해서 각 백업 마다 데이터를
+> 통째로 백업하여 관리하는 것이 아닌 변경 사항에 대해서 백업을 하여 저장 공간을 아껴 저장한다.
+
+### EBS-optimized EC2 instance
+> 일반적인 EC2 인스턴스는 외부에서 들어오는 네트워크 인터페이스와 EBS 볼륨과의 통신 네트워크 인터페이스가 동일하다.  
+> 외부에서 들어오는 트래픽이 많아질 수록 EBS 볼륨과의 통신에도 악영향을 끼칠 수 있다.  
+> 특히나 EBS 타입을 IOPS SSD 로 사용하는 경우에는 특히나 EBS-optimized instance 를 사용해야 효과를 볼 수 있다.   
+> 일반적으로 만들 때 EBS 최적화가 활성화 되어 있다.  
+
 ---
 
 ## SecurityGroup
