@@ -238,4 +238,68 @@
 
 ## Load balancer
 ### 개요
+> 로드 밸런서를 통해서 EC2 인스턴스들을 그룹화하여 단일 endpoint 를 제공한다.  
+> 그룹화한 EC2 인스턴스들의 health check 를 주기적으로 하며 healthy 한 인스턴스에만 트래픽을 라우팅한다.  
+
+### Application load balancer
+> Application level(OSI 7)의 라우팅을 지원한다.  
+> 지원하는 Protocol 은 HTTP, HTTPS 이다.    
+> 고정 IP 는 지원하지 않는다.  
+
+### Network load balancer
+> TCP level(OSI 4) 의 라우팅을 지원한다.  
+> 지원하는 Protocol 은 TCP 이다. (HTTP, HTTPS 도 포트로 지원하지만 Application leve 의 지원은 없다)  
+> 고정 IP 를 지원한다.  
+
+### Access logs
+> ELB 는 access log 를 생성하는 기능이 있다.  
+> source IP address, latencies, request path, server response 등을 기록한다.  
+> access log 는 S3 에 기록되며 버킷명은 사용자가 지정할 수 있다. 추가 비용은 없다.  
+> access log 기록 옵션은 default 로 off 로 되어있으며 확인 및 수정을 위해서는 다음의 경로로 이동하면 된다.  
+> EC2 콘솔 이동 -> 로드 밸런서 -> 로드 밸런서 클릭 -> 아래 Attributes 탭 클릭 -> Monitoring 섹션에 Access logs 확인  
+
+### Connection draining
+> ELB 는 unhealthy 하거나 deregister 하는 인스턴스의 라우팅을 멈추고 healthy 한 인스턴스에 라우팅한다.    
+> 인스턴스를 deregister 시에 이미 해당 인스턴스에 들어온 요청을 처리하기 위해서 인스턴스의 deregister 를 딜레이한다.  
+> deregistration delay 는 1초부터 3600초까지 설정할 수 있다.  
+> deregistration delay 는 Load balancer 에 설정하는 것이 아닌 대상 그룹(Target group)에 설정한다.  
+> 설정은 다음과 같다.  
+> EC2 콘솔 -> 대상 그룹 -> 대상 그룹 클릭 -> Attributes 탭 클릭 -> Target configuration 섹션에서 Deregistration delay 확인  
+
+### 삭제 방지
+> EC2 인스턴스 뿐 아니라 로드밸런서도 삭제 방지 기능을 사용하여 삭제 방지를 할 수 있다.  
+
+### Listener rules
+> ELB Listener 의 rule 을 통해서 경로 기반 라우팅, domain 기반 라우팅 등을 설정할 수 있다.  
+> rule 기능을 통해서 하나의 ELB 로 여러 domain 기반의 서비스를 하나의 ELB 를 통해서 서비스할 수 있다.  
+
+### Cross-zone load balancing
+> ELB 에서 라우팅을 2개의 AZ 에 나눠서 라운드 로빈으로 라우팅한다고 가정한다.  
+> 2a 에는 10개의 인스턴스가 2c 에는 2개의 인스턴스가 있다고 가정하고 10개의 요청이 발생하면 ELB 는 기본적으로 
+> 2a 와 2c 에 각각 5개의 요청을 배분한다.  
+> 하지만 Cross-zone load balancing 을 enable 하면 각 AZ 의 인스턴스 갯수에 맞게 요청을 배분한다.  
+> Application load balancer 에서는 항상 enable 되어 있으며 Network load balancer 에서만 enable/disable 설정이 가능하다.  
 > 
+> EC2 콘솔 이동 -> 로드 밸런서 -> 로드 밸런서 클릭 -> 아래 Attributes 탭 클릭 -> Target selection configuration 섹션에 
+> Cross-zone load balancing 확인  
+
+### SSL offloading
+> HTTPS 트래픽을 받기 위해서 ELB 에 SSL cert 를 등록 후 HTTPS 포트로 Listener 를 설정하여 HTTPS 트래픽을 받는다. 
+> 대상 그룹에는 HTTPS(443) 로 트래픽을 받지 않고 HTTP(80) 로 받으면 ELB 에서 트래픽에 대한 암호화/복호화 작업을 수행하고
+> 서비스하는 EC2 인스턴스들은 암호화/복호화 작업을 수행하지 않고 복호화된 트래픽을 받아서 처리만 하면 되기 때문에 
+> EC2 인스턴스들에 부하가 적어진다.  
+> 
+> SSL Cert 는 AWS Certificate Manager(ACM) 에서 발급받을 수 있다.  
+
+### Proxy protocol
+> ELB 로 요청이 들어오면 ELB 에서 본인의 IP 주소로 source IP 를 변경한다.  
+> EC2 콘솔 이동 -> 로드 밸런서 -> 로드 밸런서 클릭 -> 아래 Attributes 탭 클릭 -> Traffic configuration 섹션에
+> X-Forwarded-for header 에 Append 값을 통해서 애플리케이션에서 X-Forwarded-for header 를 통해 client 의 IP 를 알 수 있다.
+
+### Slow start
+> 대상 그룹(Target group)에 EC2 인스턴스가 추가된 후 InService 로 상태가 변하고 나서 로드밸런서에서 해당 인스턴스로
+> 트래픽을 라우팅을 바로 하지 않고 기다리는 시간을 설정할 수 있다.  
+> EC2 콘솔 -> 대상 그룹 -> 대상 그룹 클릭 -> Attributes 탭 클릭 -> Traffic configuration 섹션에서 Slow start duration 확인  
+> 설정을 안할 거면 0초로 설정할 수 있고 설정 시 30초부터 15분까지로 설정할 수 있다.  
+
+
