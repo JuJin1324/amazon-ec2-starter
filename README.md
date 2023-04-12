@@ -22,10 +22,10 @@
 > 애플리케이션이 실행 도중 중단되도 상관없는 경우 사용한다.  
 > 
 > Reserved instances  
-> 인스턴스에 일정기간(1년~3년) 약정을 걸어서 사용한다.  
+> 인스턴스에 일정기간(1년에서 3년) 약정을 걸어서 사용한다.  
 > 약정은 선수금 모두 지급, 선수금 부분 지급, 선수금 없음 옵션을 선택 가능하다.  
 > 선수금을 모두 지급하는 옵션을 선택하면 On-demand 의 비용 기준 약 75% 를 절감할 수 있다.  
-> 선수금 없음 옵션을 선택하면 On-demand 의 비용 기준 약 35~40% 를 절감할 수 있다.    
+> 선수금 없음 옵션을 선택하면 On-demand 의 비용 기준 약 35% 에서 40% 를 절감할 수 있다.    
 > Reserved instance 는 특정 인스턴스에 약정을 거는 것이 아닌 인스턴스 타입(스펙)에 약정을 거는 것이다.    
 > AWS 의 EC2 가격이 지속적으로 떨어지고 있음으로 약정은 1년 정도씩 거는 것이 권장된다.  
 > 참고로 약정을 걸게되면 약정건 인스턴스의 정확한 타입(스펙)으로 이용하지 않아도 약정 비용이 그대로 청구되기 때문에
@@ -117,7 +117,7 @@
 > Root device type, Virtualization type
 
 ### Root device type
-> EC2 인스턴스의 부팅가능한 block device 를 root device 라고 명명된다.    
+> EC2 인스턴스의 부팅가능한 block device(SSD와 같은 storage) 를 root device 라고 명명된다.    
 > Root device type 은 다음 2가지 이다.  
 > Amazon EBS, Instance store  
 > 
@@ -248,7 +248,7 @@
 
 ### Network load balancer
 > TCP level(OSI 4) 의 라우팅을 지원한다.  
-> 지원하는 Protocol 은 TCP 이다. (HTTP, HTTPS 도 포트로 지원하지만 Application leve 의 지원은 없다)  
+> 지원하는 Protocol 은 TCP 이다. (HTTP, HTTPS 도 포트로 지원하지만 Application level 의 지원은 없다)  
 > 고정 IP 를 지원한다.  
 
 ### Access logs
