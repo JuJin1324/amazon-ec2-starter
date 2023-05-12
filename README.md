@@ -36,7 +36,7 @@
 > 인스턴스의 OS 를 shutdown 한다. shutdown 완료 후 stopped 상태가 되며 해당 상태에서는 EC2 인스턴스 비용이 발생하지 않는다.
 > (EBS 사용 비용은 발생한다.)  
 > stopped 된 상태에서 인스턴스 타입(스펙)을 변경할 수 있다.    
-> stopped 된 상태에서 EBS 볼륨(root volume)을 변경할 수 이다.    
+> stopped 된 상태에서 EBS 볼륨(root volume)을 변경할 수 있다.    
 >
 > reboot  
 > 아마존에서는 SSH 를 통해서 OS 에 접근해서 직접 reboot 하지않고 AWS Console 혹은 CLI, API 를 통해서 reboot 하는 것을 권장한다.
@@ -102,7 +102,7 @@
 > export AWS_KEYPAIR=$HOME/.ssh/test-keypair.pem
 > export BASTION_HOST_IP=<Bastion host 의 public IP address>
 > export PRIVATE_EC2_IP=<Private instance 의 private IP address>
-> ssh -t -o ProxyCommand="ssh -W %h:%p ec2-user@$BASTION_HOST_IP -i $AWS_KEYPAIR" ec2-user@$PRIVATE_EC2_IP -i $AWS_KEYPAIR'
+> ssh -t -o ProxyCommand="ssh -W %h:%p ec2-user@$BASTION_HOST_IP -i $AWS_KEYPAIR" ec2-user@$PRIVATE_EC2_IP -i $AWS_KEYPAIR
 > ```
 
 ---
@@ -193,7 +193,7 @@
 ### 구성 요소
 > Auto scaling group: EC2 인스턴스를 조정 및 관리 목적의 논리 단위로 취급될 수 있도록 그룹으로 구성 
 > 
-> Minimum size
+> Minimum size  
 > 트래픽의 감소로 인하여 최소한으로 유지할 인스턴스의 양, CloudWatch 에서 scale down 이벤트 트리거로 인하여 
 > 인스턴스를 줄여도 이 값 만큼의 인스턴스는 실행되어야 한다.
 > 
@@ -203,7 +203,7 @@
 > Maximum size  
 > 트래픽의 증가로 인하여 인스턴스를 늘리지만 무한정으로 늘릴 수 없기 때문에 늘릴 수 있는 양의 최대치 
 > 
-> Instance template
+> Instance template  
 > auto scaling 시 인스턴스를 생성하기 위한 AMI 이미지  
 
 ### 참조사이트
@@ -224,10 +224,10 @@
 > 서비스와 애플리케이션으로 분류: <큰 서비스 이름>-<애플리케이션 이름> 
 > 애플리케이션으로만 분류: <애플리케이션 이름>
 > 
-> 예를 들어 `jujin` 이라는 web application 서비스를 호스팅하는 EC2 를 만들어서 해당 EC2 인스턴스에 SecurityGroup 을 붙이려고 할 때 
-> SecurityGroup 의 이름을 `jujin-web-app` 와 같은 식으로 혹은 `web-app` 와 같이 범위를 더 늘려서 나눈다.
+> 예를 들어 `order` 이라는 web application 서비스를 호스팅하는 EC2 를 만들어서 해당 EC2 인스턴스에 SecurityGroup 을 붙이려고 할 때 
+> SecurityGroup 의 이름을 `order-web-app` 와 같은 식으로 혹은 `web-app` 와 같이 범위를 더 늘려서 나눈다.
 > 
-> `jujin` 이라는 rdbms 서비스를 호스팅하는 RDS 의 경우는 해당 RDS 인스턴스에 붙일 SecurityGroup 이름을 `jujin-mysql` 혹은 
+> `order` 이라는 rdbms 서비스를 호스팅하는 RDS 의 경우는 해당 RDS 인스턴스에 붙일 SecurityGroup 이름을 `order-mysql` 혹은 
 > `mysql` 와 같이 범위를 더 늘려서 나눈다.
 
 ### source IP 에 SecurityGroup ID 가 붙는 경우
